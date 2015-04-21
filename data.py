@@ -1,4 +1,7 @@
+import matplotlib.pyplot as pyplot
+from random import random
 import numpy as np
+from numpy.testing import rand
 
 
 def get_test_data_inputs():
@@ -18,6 +21,23 @@ def get_test_data_inputs():
          [5.5, 2.6, 4.4, 1.2],
          [6.1, 3.0, 4.6, 1.4]]
     )
+
+
+def generate_data(n):
+    xb = (rand(n) * 2 - 1) / 2 - 0.5
+    yb = (rand(n) * 2 - 1) / 2 + 0.5
+    xr = (rand(n) * 2 - 1) / 2 + 0.5
+    yr = (rand(n) * 2 - 1) / 2 - 0.5
+    inputs = []
+    for i in range(len(xb)):
+        inputs.append([xb[i], yb[i], -1, 1])
+        inputs.append([xr[i], yr[i], -1, 0])
+    return inputs
+
+
+print(generate_data(1))
+print(generate_data(2))
+print(generate_data(3))
 
 
 def get_test_data_outputs():
