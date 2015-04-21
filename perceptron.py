@@ -5,6 +5,8 @@ from scipy.linalg import norm
 
 from data import generate_data
 
+ITERATION_MAX = 100
+
 
 class Perceptron:
     def __init__(self):
@@ -16,6 +18,7 @@ class Perceptron:
         self.train(generate_data(50))
 
     def activation(self, inputs_row):
+        # dot product calc
         rez = self.weights[0] * inputs_row[0] + \
               self.weights[1] * inputs_row[1] + \
               self.weights[2] * inputs_row[2]
@@ -31,12 +34,12 @@ class Perceptron:
             global_error = 0.0
             for row in training_data:  # for each sample
                 response = self.activation(row)
-                if row[3] != response:  # if we have a wrong response
-                    iter_error = row[3] - response  # desired response - actual response
+                if row[-1] != response:  # if we have a wrong response
+                    iter_error = row[-1] - response  # desired response - actual response
                     self.update_weights(row, iter_error)
-                    global_error += abs(iter_error)
+                    global_error += abs(iter_error)  # absolute value
             iteration += 1
-            if global_error == 0.0 or iteration >= 100:  # over fitting
+            if global_error == 0 or iteration >= ITERATION_MAX:  # over fitting
                 learned = True  # stop learning
 
     def update_weights(self, training_data_row, iter_error):
