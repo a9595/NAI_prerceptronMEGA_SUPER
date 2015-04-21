@@ -1,8 +1,9 @@
 import random
+
 from matplotlib.pyplot import plot, show
-import numpy as np
 from scipy.linalg import norm
-from data import get_training_data, generate_data
+
+from data import generate_data
 
 
 class Perceptron:
@@ -23,24 +24,24 @@ class Perceptron:
         else:
             return 0
 
-    def train(self, data):
+    def train(self, training_data):
         learned = False
         iteration = 0
         while not learned:
             global_error = 0.0
-            for x in data:  # for each sample
-                r = self.activation(x)
-                if x[2] != r:  # if we have a wrong response
-                    iter_error = x[2] - r  # desired response - actual response
-                    self.update_weights(x, iter_error)
+            for row in training_data:  # for each sample
+                response = self.activation(row)
+                if row[3] != response:  # if we have a wrong response
+                    iter_error = row[3] - response  # desired response - actual response
+                    self.update_weights(row, iter_error)
                     global_error += abs(iter_error)
             iteration += 1
             if global_error == 0.0 or iteration >= 100:  # over fitting
                 learned = True  # stop learning
 
-    def update_weights(self, x, iter_error):
-        self.weights[0] += self.learning_rate * iter_error * x[0]
-        self.weights[1] += self.learning_rate * iter_error * x[1]
+    def update_weights(self, training_data_row, iter_error):
+        self.weights[0] += self.learning_rate * iter_error * training_data_row[0]
+        self.weights[1] += self.learning_rate * iter_error * training_data_row[1]
         self.weights[2] -= self.learning_rate * iter_error
 
 
@@ -51,7 +52,7 @@ test_set = generate_data(100)  # test set generation
 # Perceptron test
 for x in test_set:
     r = perceptron.activation(x)
-    if r != x[2]:  # if the response is not correct
+    if r != x[3]:  # if the response is not correct
         print('error')
     if r == 1:
         plot(x[0], x[1], 'ob')
