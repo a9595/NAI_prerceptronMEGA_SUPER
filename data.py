@@ -35,11 +35,6 @@ def generate_data(n):
     return inputs
 
 
-print(generate_data(1))
-print(generate_data(2))
-print(generate_data(3))
-
-
 def get_test_data_outputs():
     return np.array(
         [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1]
