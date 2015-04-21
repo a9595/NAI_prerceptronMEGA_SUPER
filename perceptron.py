@@ -53,23 +53,24 @@ perceptron = Perceptron()  # perceptron instance
 test_set = generate_data(100)  # test set generation
 
 # Perceptron test
-for x in test_set:
-    r = perceptron.activation(x)
-    if r != x[3]:  # if the response is not correct
+for row in test_set:
+    response = perceptron.activation(row)
+    if response != row[-1]:  # if the response is not correct
         print('error')
-    if r == 1:
-        plot(x[0], x[1], 'ob')
+
+    if response == 1:
+        plot(row[0], row[1], 'ob')
     else:
-        plot(x[0], x[1], 'or')
+        plot(row[0], row[1], 'og')
 
 # plot of the separation line.
 # The separation line is orthogonal to w
-n = norm(perceptron.weights)
-ww = []
-for w in perceptron.weights:
-    ww.append(w / n)
+vector_length = norm(perceptron.weights)
+normalized_vector_arr = []
+for weight in perceptron.weights:
+    normalized_vector_arr.append(weight / vector_length)
 
-ww1 = [ww[1], -ww[0]]
-ww2 = [-ww[1], ww[0]]
-plot([ww1[0], ww2[0]], [ww1[1], ww2[1]], '--k')
+orthogonal_up = [normalized_vector_arr[1], -normalized_vector_arr[0]]
+orthogonal_down = [-normalized_vector_arr[1], normalized_vector_arr[0]]
+plot([orthogonal_up[0], orthogonal_down[0]], [orthogonal_up[1], orthogonal_down[1]], '--k')
 show()
