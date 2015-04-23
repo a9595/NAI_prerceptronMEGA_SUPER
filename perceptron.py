@@ -3,22 +3,28 @@ import random
 from matplotlib.pyplot import plot, show
 from scipy.linalg import norm
 
-from data import generate_data
+from numpy.testing import rand
+
+
+LEARNING_RATE = 0.5
+
+GENERATED_DATA_AMOUNT = 50
 
 ITERATION_MAX = 100
 
 
 class Perceptron:
-    def __init__(self):
-        self.weights = [random.random(), random.random(), random.random()]  # depends on amount of inputs
-        # self.training_data_arr = get_training_data()
-        # self.input_data = self.training_data_arr[:, :4]  # get fist 4 columns - only user input
-        # self.input_results = self.training_data_arr[:, -1]
-        self.learning_rate = 0.5  # learning speed
-        self.train(generate_data(50))
+    def __init__(self, inputs_number):
+        self.weights = []
+        for index in range(inputs_number):
+            self.weights.append(random.random())
+        # self.weights = [random.random(), random.random(), random.random()]  # depends on amount of inputs
+        self.learning_rate = LEARNING_RATE  # learning speed
+        self.train(generate_data(GENERATED_DATA_AMOUNT))
 
     def activation(self, inputs_row):
         # dot product calc
+
         rez = self.weights[0] * inputs_row[0] + \
               self.weights[1] * inputs_row[1] + \
               self.weights[2] * inputs_row[2]
@@ -48,7 +54,21 @@ class Perceptron:
         self.weights[2] -= self.learning_rate * iter_error
 
 
-perceptron = Perceptron()  # perceptron instance
+def generate_data(n):
+    xb = (rand(n) * 2 - 1) / 2 - 0.5
+    yb = (rand(n) * 2 - 1) / 2 + 0.5
+    xr = (rand(n) * 2 - 1) / 2 + 0.5
+    yr = (rand(n) * 2 - 1) / 2 - 0.5
+    inputs = []
+    for i in range(len(xb)):
+        inputs.append([xb[i], yb[i], -1, 1])  # threshold -1
+        inputs.append([xr[i], yr[i], -1, 0])
+    return inputs
+
+# Creating a perceptron object:
+
+
+perceptron = Perceptron(3)  # perceptron instance
 
 test_set = generate_data(100)  # test set generation
 
