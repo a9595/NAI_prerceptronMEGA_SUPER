@@ -1,22 +1,68 @@
 import random
 
 from matplotlib.pyplot import plot, show
-from scipy.linalg import norm
-
 from numpy.testing import rand
+from scipy.linalg import norm
 
 
 LEARNING_RATE = 0.5
 
-GENERATED_DATA_AMOUNT = 50
+GENERATED_DATA_AMOUNT = 100
 
 ITERATION_MAX = 100
 
 
+def generate_data(n):
+    # xb = (rand(n) * 2 - 1) / 2 - 0.5  # from -1 to 0
+    yr = (rand(n) * 2 - 1) / 2 - 0.5
+
+    # xr = (rand(n) * 2 - 1) / 2 + 0.5  # from 0 to 0.99
+    yb = (rand(n) * 2 - 1) / 2 + 0.5
+
+    xr = random.random()
+    xb = random.random()
+    xb -= xb * 2
+
+    inputs = []
+    # for i in range(len(n)):
+    #     inputs.append([xb[i], yb[i], -1, 1])  # threshold -1
+    #     inputs.append([xr[i], yr[i], -1, 0])
+
+    for i in range(n):
+        inputs.append([random.uniform(-1, 0),
+                      random.uniform(0, 1),
+                      -1,
+                      1])  # threshold -1
+
+        inputs.append([random.uniform(0, 1),
+                      random.uniform(-1, 0),
+                      -1,
+                      0])
+    return inputs
+
+
+# def generate_data(n):
+#     # xb = (rand(n) * 2 - 1) / 2 - 0.5  # from -1 to 0
+#     yr = (rand(n) * 2 - 1) / 2 - 0.5
+#
+#     # xr = (rand(n) * 2 - 1) / 2 + 0.5  # from 0 to 0.99
+#     yb = (rand(n) * 2 - 1) / 2 + 0.5
+#
+#     xr = random.random()
+#     xb = random.random()
+#     xb -= xb * 2
+#
+#     inputs = []
+#     for i in range(len(n)):
+#         inputs.append([xb[i], yb[i], -1, 1])  # threshold -1
+#         inputs.append([xr[i], yr[i], -1, 0])
+#     return inputs
+
+
 class Perceptron:
-    def __init__(self, inputs_number):
+    def __init__(self):
         self.weights = []
-        for index in range(inputs_number):
+        for index in range(3):
             self.weights.append(random.random())
         # self.weights = [random.random(), random.random(), random.random()]  # depends on amount of inputs
         self.learning_rate = LEARNING_RATE  # learning speed
@@ -24,10 +70,10 @@ class Perceptron:
 
     def activation(self, inputs_row):
         # dot product calc
+        rez = 0
+        for w, i in zip(self.weights, inputs_row):
+            rez += w * i
 
-        rez = self.weights[0] * inputs_row[0] + \
-              self.weights[1] * inputs_row[1] + \
-              self.weights[2] * inputs_row[2]
         if rez >= 0:
             return 1
         else:
@@ -38,50 +84,49 @@ class Perceptron:
         iteration = 0
         while not learned:
             global_error = 0.0
-            for row in training_data:  # for each sample
-                response = self.activation(row)
-                if row[-1] != response:  # if we have a wrong response
-                    iter_error = row[-1] - response  # desired response - actual response
-                    self.update_weights(row, iter_error)
+            for data_row in training_data:  # for each sample
+                my_response = self.activation(data_row)
+                if data_row[-1] != my_response:  # if we have a wrong response
+                    iter_error = data_row[-1] - my_response  # desired response - actual response
+                    self.update_weights(data_row, iter_error)
                     global_error += abs(iter_error)  # absolute value
             iteration += 1
             if global_error == 0 or iteration >= ITERATION_MAX:  # over fitting
                 learned = True  # stop learning
 
     def update_weights(self, training_data_row, iter_error):
-        self.weights[0] += self.learning_rate * iter_error * training_data_row[0]
-        self.weights[1] += self.learning_rate * iter_error * training_data_row[1]
-        self.weights[2] -= self.learning_rate * iter_error
+        for idx in range(len(self.weights) - 1):
+            self.weights[idx] += self.learning_rate * iter_error * training_data_row[idx]
+        self.weights[-1] -= self.learning_rate * iter_error
+        # self.weights[0] += self.learning_rate * iter_error * training_data_row[0]
+        # self.weights[1] += self.learning_rate * iter_error * training_data_row[1]
+        # self.weights[2] -= self.learning_rate * iter_error
 
 
-def generate_data(n):
-    xb = (rand(n) * 2 - 1) / 2 - 0.5
-    yb = (rand(n) * 2 - 1) / 2 + 0.5
-    xr = (rand(n) * 2 - 1) / 2 + 0.5
-    yr = (rand(n) * 2 - 1) / 2 - 0.5
-    inputs = []
-    for i in range(len(xb)):
-        inputs.append([xb[i], yb[i], -1, 1])  # threshold -1
-        inputs.append([xr[i], yr[i], -1, 0])
-    return inputs
-
-# Creating a perceptron object:
+# ------------------------ Creating a perceptron object and test:
 
 
-perceptron = Perceptron(3)  # perceptron instance
+perceptron = Perceptron()  # perceptron instance
 
 test_set = generate_data(100)  # test set generation
 
 # Perceptron test
+errors_count = 0
 for row in test_set:
     response = perceptron.activation(row)
     if response != row[-1]:  # if the response is not correct
-        print('error')
+        # print('error')
+        errors_count += 1
 
     if response == 1:
         plot(row[0], row[1], 'ob')
     else:
         plot(row[0], row[1], 'og')
+
+# ====== Console prints:
+print("example of generated data: ", test_set)
+print("error% = ", (errors_count / ITERATION_MAX) * 100)
+
 
 # plot of the separation line.
 # The separation line is orthogonal to w
