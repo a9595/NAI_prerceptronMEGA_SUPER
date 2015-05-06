@@ -14,16 +14,38 @@ ITERATION_MAX = 100
 def generate_data(n):
     inputs = []
     for i in range(n):
+        bias = -1  # x1.w1 + x2.w2 - 1.w0 = 0
         inputs.append([random.uniform(-1, 0),
                        random.uniform(0, 1),
-                       -1,
+                       bias,
                        1])  # threshold -1
 
         inputs.append([random.uniform(0, 1),
                        random.uniform(-1, 0),
-                       -1,
+                       bias,
                        0])
     return inputs
+
+
+# def generate_data(n):
+# inputs = []
+# for i in range(n * 2):
+#         x_study = random.randint(0, 24)
+#         x_sleep = 24 - x_study
+#         x_output_data = random.randint(0, 1)
+#         inputs.append([x_study,
+#                        x_sleep,
+#                        -1,  # threshold
+#                        x_output_data])  # 0..1
+#
+#         x_study = random.randint(0, 24)
+#         x_sleep = 24 - x_study
+#         x_output_data = random.randint(0, 1)
+#         inputs.append([x_study,
+#                        x_sleep,
+#                        -1,  # threshold
+#                        x_output_data])  # 0..1
+#     return inputs
 
 
 class Perceptron:
@@ -45,7 +67,8 @@ class Perceptron:
             dot_product += w * i
             iteration += 1
 
-        if dot_product >= 0:
+        threshold = 0
+        if dot_product >= threshold:
             return 1
         else:
             return 0
@@ -56,7 +79,7 @@ class Perceptron:
         while not learned:
             global_error = 0.0
             for data_row in training_data:  # for each sample
-                my_response = self.activation(data_row)
+                my_response = self.activation(data_row)  # is data fired(1)
                 if data_row[-1] != my_response:  # if we have a wrong response
                     iter_error = data_row[-1] - my_response  # desired response - actual response
                     self.update_weights(data_row, iter_error)
@@ -68,7 +91,7 @@ class Perceptron:
     def update_weights(self, training_data_row, iter_error):
         for idx in range(len(self.weights) - 1):
             self.weights[idx] += self.learning_rate * iter_error * training_data_row[idx]  # delta rule
-        self.weights[-1] -= self.learning_rate * iter_error
+        self.weights[-1] -= self.learning_rate * iter_error  # bias weights change
         # self.weights[0] += self.learning_rate * iter_error * training_data_row[0]
         # self.weights[1] += self.learning_rate * iter_error * training_data_row[1]
         # self.weights[2] -= self.learning_rate * iter_error
@@ -110,3 +133,6 @@ orthogonal_up = [normalized_vector_arr[1], -normalized_vector_arr[0]]
 orthogonal_down = [-normalized_vector_arr[1], normalized_vector_arr[0]]
 plot([orthogonal_up[0], orthogonal_down[0]], [orthogonal_up[1], orthogonal_down[1]], '--k')
 show()
+
+
+# http://stackoverflow.com/questions/6554792/whats-the-point-of-the-threshold-in-a-perceptron
