@@ -33,15 +33,17 @@ class Perceptron:
             self.weights.append(random.random())
         # self.weights = [random.random(), random.random(), random.random()]  # depends on amount of inputs
         self.learning_rate = LEARNING_RATE  # learning speed
-        train_data = generate_data(GENERATED_DATA_AMOUNT)
-        self.train(train_data)
+        self.train_data = generate_data(GENERATED_DATA_AMOUNT)
+        self.train(self.train_data)
 
     def activation(self, inputs_row):
         # dot product calc
         # inputs_row example = [-0.81239265210117029, 0.85921322532026534, -1, 1]
         dot_product = 0
+        iteration = 0
         for w, i in zip(self.weights, inputs_row):
             dot_product += w * i
+            iteration += 1
 
         if dot_product >= 0:
             return 1
@@ -65,7 +67,7 @@ class Perceptron:
 
     def update_weights(self, training_data_row, iter_error):
         for idx in range(len(self.weights) - 1):
-            self.weights[idx] += self.learning_rate * iter_error * training_data_row[idx]
+            self.weights[idx] += self.learning_rate * iter_error * training_data_row[idx]  # delta rule
         self.weights[-1] -= self.learning_rate * iter_error
         # self.weights[0] += self.learning_rate * iter_error * training_data_row[0]
         # self.weights[1] += self.learning_rate * iter_error * training_data_row[1]
