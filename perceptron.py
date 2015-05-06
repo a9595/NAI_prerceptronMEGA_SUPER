@@ -1,7 +1,6 @@
 import random
 
 from matplotlib.pyplot import plot, show
-from numpy.testing import rand
 from scipy.linalg import norm
 
 
@@ -13,50 +12,18 @@ ITERATION_MAX = 100
 
 
 def generate_data(n):
-    # xb = (rand(n) * 2 - 1) / 2 - 0.5  # from -1 to 0
-    yr = (rand(n) * 2 - 1) / 2 - 0.5
-
-    # xr = (rand(n) * 2 - 1) / 2 + 0.5  # from 0 to 0.99
-    yb = (rand(n) * 2 - 1) / 2 + 0.5
-
-    xr = random.random()
-    xb = random.random()
-    xb -= xb * 2
-
     inputs = []
-    # for i in range(len(n)):
-    #     inputs.append([xb[i], yb[i], -1, 1])  # threshold -1
-    #     inputs.append([xr[i], yr[i], -1, 0])
-
     for i in range(n):
         inputs.append([random.uniform(-1, 0),
-                      random.uniform(0, 1),
-                      -1,
-                      1])  # threshold -1
+                       random.uniform(0, 1),
+                       -1,
+                       1])  # threshold -1
 
         inputs.append([random.uniform(0, 1),
-                      random.uniform(-1, 0),
-                      -1,
-                      0])
+                       random.uniform(-1, 0),
+                       -1,
+                       0])
     return inputs
-
-
-# def generate_data(n):
-#     # xb = (rand(n) * 2 - 1) / 2 - 0.5  # from -1 to 0
-#     yr = (rand(n) * 2 - 1) / 2 - 0.5
-#
-#     # xr = (rand(n) * 2 - 1) / 2 + 0.5  # from 0 to 0.99
-#     yb = (rand(n) * 2 - 1) / 2 + 0.5
-#
-#     xr = random.random()
-#     xb = random.random()
-#     xb -= xb * 2
-#
-#     inputs = []
-#     for i in range(len(n)):
-#         inputs.append([xb[i], yb[i], -1, 1])  # threshold -1
-#         inputs.append([xr[i], yr[i], -1, 0])
-#     return inputs
 
 
 class Perceptron:
@@ -66,15 +33,17 @@ class Perceptron:
             self.weights.append(random.random())
         # self.weights = [random.random(), random.random(), random.random()]  # depends on amount of inputs
         self.learning_rate = LEARNING_RATE  # learning speed
-        self.train(generate_data(GENERATED_DATA_AMOUNT))
+        train_data = generate_data(GENERATED_DATA_AMOUNT)
+        self.train(train_data)
 
     def activation(self, inputs_row):
         # dot product calc
-        rez = 0
+        # inputs_row example = [-0.81239265210117029, 0.85921322532026534, -1, 1]
+        dot_product = 0
         for w, i in zip(self.weights, inputs_row):
-            rez += w * i
+            dot_product += w * i
 
-        if rez >= 0:
+        if dot_product >= 0:
             return 1
         else:
             return 0
