@@ -52,4 +52,11 @@ class Perceptron:
             self.weights[idx] += self.learning_rate * iter_error * training_data_row[idx]  # delta rule
         self.weights[-1] -= self.learning_rate * iter_error  # bias weights change
 
-        # http://stackoverflow.com/questions/6554792/whats-the-point-of-the-threshold-in-a-perceptron
+    def print_training_data(self):
+        for data in self.train_data:
+            print(data)
+
+    def print_weights_info(self):
+        print("final weights")
+        for i, w in enumerate(self.weights):
+            print('w{} = {}'.format(i + 1, w))

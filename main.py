@@ -4,13 +4,14 @@ from scipy.linalg import norm
 from perceptron import Perceptron, generate_data, GENERATE_TEST_SET_AMOUNT, ITERATION_MAX
 
 perceptron = Perceptron()
-print("example of generated data: ", perceptron.train_data)
+perceptron.print_training_data()
 
-test_set = generate_data(GENERATE_TEST_SET_AMOUNT)  # test set generation
+test_data_arr = generate_data(GENERATE_TEST_SET_AMOUNT)  # test set generation
+
 
 error_count = 0
 # Perceptron test
-for data_raw in test_set:
+for data_raw in test_data_arr:
     resp = perceptron.activation(data_raw)
     if resp != data_raw[-1]:  # if the response is not correct
         error_count += 1
@@ -19,7 +20,10 @@ for data_raw in test_set:
     else:
         plot(data_raw[0], data_raw[1], 'or')
 
+
+# ========== PRINT INFO
 print("error % =", (error_count / ITERATION_MAX) * 100)
+perceptron.print_weights_info()
 
 vector_length = norm(perceptron.weights)
 normalized_vector_arr = []
