@@ -1,2 +1,2 @@
-# NAI_prerceptronMEGA_SUPER
-Perceptron implementation in Python
+# NAI_prerceptron
+Simple perceptron implementation in Python
