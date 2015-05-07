@@ -1,16 +1,11 @@
 import random
 
-from matplotlib.pyplot import plot, show
-from scipy.linalg import norm
 from data import generate_data
 
 GENERATE_TEST_SET_AMOUNT = 100
-GENERATED_TRAINING_DATA_AMOUNT = 10
+GENERATED_TRAINING_DATA_AMOUNT = 100
 LEARNING_RATE = 0.5
-ITERATION_MAX = 50
-
-
-
+ITERATION_MAX = 100
 
 
 class Perceptron:
@@ -57,4 +52,4 @@ class Perceptron:
             self.weights[idx] += self.learning_rate * iter_error * training_data_row[idx]  # delta rule
         self.weights[-1] -= self.learning_rate * iter_error  # bias weights change
 
-# http://stackoverflow.com/questions/6554792/whats-the-point-of-the-threshold-in-a-perceptron
+        # http://stackoverflow.com/questions/6554792/whats-the-point-of-the-threshold-in-a-perceptron
