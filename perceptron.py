@@ -18,7 +18,7 @@ def generate_data(n):
         inputs.append([random.uniform(-1, 0),
                        random.uniform(0, 1),
                        bias,
-                       1])  # threshold -1
+                       1])
 
         inputs.append([random.uniform(0, 1),
                        random.uniform(-1, 0),
@@ -27,36 +27,17 @@ def generate_data(n):
     return inputs
 
 
-# def generate_data(n):
-# inputs = []
-# for i in range(n * 2):
-#         x_study = random.randint(0, 24)
-#         x_sleep = 24 - x_study
-#         x_output_data = random.randint(0, 1)
-#         inputs.append([x_study,
-#                        x_sleep,
-#                        -1,  # threshold
-#                        x_output_data])  # 0..1
-#
-#         x_study = random.randint(0, 24)
-#         x_sleep = 24 - x_study
-#         x_output_data = random.randint(0, 1)
-#         inputs.append([x_study,
-#                        x_sleep,
-#                        -1,  # threshold
-#                        x_output_data])  # 0..1
-#     return inputs
-
-
 class Perceptron:
     def __init__(self):
         self.weights = []
+        self.graph_data_arr = []
+        self.error_count = 0
         for index in range(3):
             self.weights.append(random.random())
         # self.weights = [random.random(), random.random(), random.random()]  # depends on amount of inputs
         self.learning_rate = LEARNING_RATE  # learning speed
         self.train_data = generate_data(GENERATED_DATA_AMOUNT)
-        self.train(self.train_data)
+        self.train()
 
     def activation(self, inputs_row):
         # dot product calc
@@ -73,17 +54,18 @@ class Perceptron:
         else:
             return 0
 
-    def train(self, training_data):
+    def train(self):
         learned = False
         iteration = 0
         while not learned:
             global_error = 0.0
-            for data_row in training_data:  # for each sample
+            for data_row in self.train_data:  # for each sample
                 my_response = self.activation(data_row)  # is data fired(1)
                 if data_row[-1] != my_response:  # if we have a wrong response
                     iter_error = data_row[-1] - my_response  # desired response - actual response
                     self.update_weights(data_row, iter_error)
                     global_error += abs(iter_error)  # absolute value
+                    self.add_graph_data(data_row[0], data_row[1], my_response)
             iteration += 1
             if global_error == 0 or iteration >= ITERATION_MAX:  # over fitting
                 learned = True  # stop learning
@@ -92,34 +74,43 @@ class Perceptron:
         for idx in range(len(self.weights) - 1):
             self.weights[idx] += self.learning_rate * iter_error * training_data_row[idx]  # delta rule
         self.weights[-1] -= self.learning_rate * iter_error  # bias weights change
-        # self.weights[0] += self.learning_rate * iter_error * training_data_row[0]
-        # self.weights[1] += self.learning_rate * iter_error * training_data_row[1]
-        # self.weights[2] -= self.learning_rate * iter_error
+
+    def add_graph_data(self, input1, input2, response_param):
+        self.graph_data_arr.append([input1, input2, response_param])
+
+    def get_error_percent(self):
+        return (self.error_count / ITERATION_MAX) * 100
 
 
 # ------------------------ Creating a perceptron object and test:
 
 
 perceptron = Perceptron()  # perceptron instance
-
-test_set = generate_data(100)  # test set generation
+perceptron.train()
 
 # Perceptron test
-errors_count = 0
-for row in test_set:
-    response = perceptron.activation(row)
-    if response != row[-1]:  # if the response is not correct
-        # print('error')
-        errors_count += 1
+# errors_count = 0
+# for row in test_set:
+#     response = perceptron.activation(row)
+#     if response != row[-1]:  # if the response is not correct
+#         # print('error')
+#         errors_count += 1
+#
+#     if response == 1:
+#         plot(row[0], row[1], 'ob')
+#     else:
+#         plot(row[0], row[1], 'og')
 
-    if response == 1:
+for row in perceptron.train_data:
+    if row[-1] == 1:
         plot(row[0], row[1], 'ob')
     else:
         plot(row[0], row[1], 'og')
 
+
 # ====== Console prints:
-print("example of generated data: ", test_set)
-print("error% = ", (errors_count / ITERATION_MAX) * 100)
+print("example of generated data: ", perceptron.train_data)
+print("error% = ", perceptron.get_error_percent())
 
 
 # plot of the separation line.
