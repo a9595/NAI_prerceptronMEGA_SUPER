@@ -2,6 +2,7 @@ import random
 
 from matplotlib.pyplot import plot, show
 from scipy.linalg import norm
+from data import generate_data
 
 GENERATE_TEST_SET_AMOUNT = 100
 GENERATED_TRAINING_DATA_AMOUNT = 10
@@ -9,20 +10,7 @@ LEARNING_RATE = 0.5
 ITERATION_MAX = 50
 
 
-def generate_data(n):
-    inputs = []
-    for i in range(n):
-        bias = -1  # x1.w1 + x2.w2 - 1.w0 = 0
-        inputs.append([random.uniform(-1, 0),
-                       random.uniform(0, 1),
-                       bias,
-                       1])
 
-        inputs.append([random.uniform(0, 1),
-                       random.uniform(-1, 0),
-                       bias,
-                       0])
-    return inputs
 
 
 class Perceptron:
